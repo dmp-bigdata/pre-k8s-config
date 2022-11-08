@@ -1,0 +1,13 @@
+fields = ["data", "name", "description"]
+relation = ["data"]
+
+[from]
+db = "mysql://bigdata:bigdata@10.201.10.252:3306/db_company_mgt"
+query = "SELECT  oid as data, name  as  name, IFNULL(comments, '')  as description from t_company_info"
+
+[dist]
+db = "mysql://bigdata:bigdata@10.201.10.252:3306/dmp"
+query = "select data,name,description from dmp_ai_data_dict where field = 'oid'"
+insert = "insert into dmp_ai_data_dict(field, data, name, description) value('oid', :data, :name, :description)"
+update = "update dmp_ai_data_dict set name=:name,description=:description where field = 'oid' and data = :data"
+delete = "delete from dmp_ai_data_dict where name=:name and field = 'oid'"

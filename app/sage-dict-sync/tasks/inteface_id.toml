@@ -1,0 +1,14 @@
+fields = ["data", "name", "description"]
+relation = ["data"]
+
+[from]
+db = "mysql://bigdata:6C1PEv1ZFtkKisHr@10.201.10.179:3306/db_dictonary"
+# db = "mysql://ywreader:hmyw@2016@120.253.32.3:13306/db_dictonary"
+query = "SELECT dic_id as data, IFNULL(dic_name, '') as name, IFNULL(dic_desc, '') as description from t_dict_meta where type='interface_info'"
+
+[dist]
+db = "mysql://bigdata:bigdata@10.201.10.252:3306/dmp"
+query = "select data,name,description from dmp_ai_data_dict where field = 'interface_id'"
+insert = "insert into dmp_ai_data_dict(field, data, name, description) value('interface_id', :data, :name, :description)"
+update = "update dmp_ai_data_dict set name=:name,description=:description where field = 'interface_id' and data = :data"
+delete = "delete from dmp_ai_data_dict where name=:name and field = 'interface_id'"

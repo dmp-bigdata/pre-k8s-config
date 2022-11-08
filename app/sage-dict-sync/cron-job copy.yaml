@@ -1,0 +1,36 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: sage-dict-sync-cron-job
+  namespace: dmp
+spec:
+  schedule: "0 5 * * *"
+  timeZone: "Asia/Shanghai"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: Never
+          containers:
+            - name: main
+              image: pre-registry-docker:5000/sage-dict-sync:0.1.1
+              imagePullPolicy: IfNotPresent
+              command:
+                - /bin/bash
+                - -c
+              args:
+                - |
+                  # foreach conf file
+                  files=`ls /opt/sage-dict-sync/conf`
+                  for file in `ls /opt/sage-dict-sync/conf`; do
+                    echo $file
+                    /opt/sage-dict-sync/bin/sage-dict-sync -c /opt/sage-dict-sync/conf/$file
+                  done
+              volumeMounts:
+                - name: config
+                  mountPath: "/opt/sage-dict-sync/conf"
+                  readOnly: true
+          volumes:
+            - name: config
+              configMap:
+                name: sage-dict-sync-tasks

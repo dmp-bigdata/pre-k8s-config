@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: sage-dict-sync-tasks-pod-demo
+  namespace: dmp
+spec:
+  containers:
+    - name: main
+      image: pre-registry-docker:5000/sage-dict-sync:0.1.1
+      imagePullPolicy: IfNotPresent
+      command:
+        - /opt/sage-dict-sync/sage-dict-sync
+        - -c
+      args:
+        - /opt/sage-dict-sync/conf/config.toml
+      volumeMounts:
+        - name: config
+          mountPath: "/opt/sage-dict-sync/conf"
+          readOnly: true
+  volumes:
+    - name: config
+      configMap:
+        name: sage-dict-sync-tasks
+        items:
+          - key: haima_service_code_desc.toml
+            path: config.toml

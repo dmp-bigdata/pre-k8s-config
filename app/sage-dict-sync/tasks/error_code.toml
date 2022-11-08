@@ -1,0 +1,13 @@
+fields = ["data", "name", "description"]
+relation = ["data"]
+
+[from]
+db = "mysql://bigdata:bigdata@10.201.10.252:3306/db_self_service"
+query = "select event_code as data, meaning as name, IFNULL(description, '') as description from haima_service_code_desc"
+
+[dist]
+db = "mysql://bigdata:bigdata@10.201.10.252:3306/dmp"
+query = "select data,name,description from dmp_ai_data_dict where field = 'error_code'"
+insert = "insert into dmp_ai_data_dict(field, data, name, description) value('error_code', :data, :name, :description)"
+update = "update dmp_ai_data_dict set name=:name,description=:description where field = 'error_code' and data = :data"
+delete = "delete from dmp_ai_data_dict where name=:name and field = 'error_code'"
